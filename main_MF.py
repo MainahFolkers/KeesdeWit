@@ -7,25 +7,25 @@ protein = Protein("HHPHHHPH")
 
 # fold protein until valid folding
 protein.coordinates = fold(protein)
-while not protein.coordinates:
-    protein.coordinates = fold(protein)
 
 xs = []
 ys = []
 # iterate over amino acids
 for i in range(protein.n):
-    # seperate coordinate sin xs and ys
+    # seperate coordinates in xs and ys
     xs.append(protein.coordinates[i][0])
     ys.append(protein.coordinates[i][1])
 
 xmin = min(xs)
 ymin = min(ys)
 # calculate ranges voor x and y
-xran = max(xs) - xmin + 1
-yran = max(ys) - ymin + 1
+xran = max(xs) - xmin
+yran = max(ys) - ymin
 
 # make grid with minimal ranges
 protein.make_grid(xran, yran)
+
+plt.figure()
 
 # iterate over amino acids
 for i in range(protein.n):
@@ -33,12 +33,9 @@ for i in range(protein.n):
     xs[i] = xs[i] - xmin
     ys[i] = ys[i] - ymin
 
-    x = xs[i]
-    y = ys[i]
-
     # place amino acids onto grid
-    protein.grid[x][y].aa = protein.chain[i]
-    protein.grid[x][y].i = i
+    protein.grid[xs[i]][ys[i]].aa = protein.chain[i]
+    protein.grid[xs[i]][ys[i]].i = i
 
     # determine color for point on plot
     if protein.chain[i] == 'H':
@@ -46,24 +43,27 @@ for i in range(protein.n):
     else:
         col = 'blue'
 
-    plt.scatter(x, y, color=col)
-    plt.annotate(i, xy=(x, y))
-# improvement: draw line behind points
-plt.plot(xs, ys, color='black')
+    plt.scatter(xs[i], ys[i], s=120, zorder=2, color=col)
+    plt.annotate(i, xy=(xs[i], ys[i]), xytext=(xs[i] + 0.05, ys[i] + 0.05), fontsize=20)
+
+# plot black line behind / between points
+plt.plot(xs, ys, lw=3, zorder=1, color='black')
+
 # show grid on plot
 plt.grid(b=True)
 
-xmax = max(xs)
-ymax = max(ys)
-
 # set tick spacing to 1
-plt.xticks(np.arange(min(xs), xmax+1, 1))
-plt.yticks(np.arange(min(ys), ymax+1, 1))
+plt.xticks(np.arange(min(xs), xran + 1, 1))
+plt.yticks(np.arange(min(ys), yran  + 1, 1))
 
 # calculte and print score
-# does not calculate score correctly!
-protein.calc_score(xmax, ymax)
-print "Score = ", protein.score
+# does not calculate score correctly
+Hbonds = protein.calc_score
+print("Score = ", protein.score)
+
+# plot dotted line to visualize H-bond
+for i in range(1, abs(protein.score)):
+    plt.plot(Hbonds[i - 1], Hbonds[i], lw=3, zorder=3, color='black', linestyle='--')
 
 # show plot
 plt.show()
