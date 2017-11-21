@@ -58,12 +58,13 @@ plt.yticks(np.arange(min(ys), yran  + 1, 1))
 
 # calculte and print score
 # does not calculate score correctly
-Hbonds = protein.calc_score
+Hbonds = protein.calc_score()
 print("Score = ", protein.score)
+print protein.directions
 
 # plot dotted line to visualize H-bond
-for i in range(1, abs(protein.score)):
-    plt.plot(Hbonds[i - 1], Hbonds[i], lw=3, zorder=3, color='black', linestyle='--')
+for i in range(abs(protein.score)):
+    plt.plot(Hbonds[i], Hbonds[i + 1], lw=3, zorder=3, color='black', linestyle='--')
 
 # show plot
 plt.show()
