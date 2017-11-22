@@ -55,4 +55,5 @@ class Protein:
                         Hbonds.append([c, c + 1])
                         score = score - 1
         self.score = score
-        return Hbonds
+        # print(score)
+        return Hbonds, score

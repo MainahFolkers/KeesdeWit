@@ -1,12 +1,17 @@
 from Protein_class_MF import *
 from fold_MF import *
+from hill_climber import *
 import matplotlib.pyplot as plt
 import numpy as np
 
+# protein to optimize
 protein = Protein("HHPHHHPH")
 
-# fold protein until valid folding
-protein.coordinates = fold(protein)
+# optimize folding with hillclimber algorithm
+resultsTuple = hill_climb(protein)
+
+# # fold protein until valid folding
+protein.coordinates = resultsTuple[1]
 
 xs = []
 ys = []
@@ -56,15 +61,24 @@ plt.grid(b=True)
 plt.xticks(np.arange(min(xs), xran + 1, 1))
 plt.yticks(np.arange(min(ys), yran  + 1, 1))
 
-# calculte and print score
-# does not calculate score correctly
-Hbonds = protein.calc_score()
+# ------------------------------------------------------------------------------------
+# EXTREMELY IMPORTANT
+# 
+# File "Protein_class_MF.py" now returns a tuple with (Hbonds, score)
+# 
+# for plotting in file "main.MF.py": store result of calc_score() in variable "Hbondsvar"
+# accessing the actual list of Hbonds from the tuple that calc_score returns:
+# --> Hbondsvar[0]
+# 
+# ------------------------------------------------------------------------------------
+Hbondsvar = protein.calc_score()
+print(Hbondsvar[1])
 print("Score = ", protein.score)
 print protein.directions
 
 # plot dotted line to visualize H-bond
 for i in range(abs(protein.score)):
-    plt.plot(Hbonds[i], Hbonds[i + 1], lw=3, zorder=3, color='black', linestyle='--')
+    plt.plot(Hbondsvar[0][i], Hbondsvar[0][i + 1], lw=3, zorder=3, color='black', linestyle='--')
 
 # show plot
 plt.show()

@@ -1,5 +1,7 @@
 from random import *
 
+# IMPO
+
 # should this be a function in the Protein class?
 def fold(protein):
     coordinates = [[] for i in range(protein.n)]
