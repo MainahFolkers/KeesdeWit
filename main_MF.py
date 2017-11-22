@@ -8,10 +8,10 @@ import numpy as np
 protein = Protein("HHPHHHPH")
 
 # optimize folding with hillclimber algorithm
-resultsTuple = hill_climb(protein)
+# resultsTuple = hill_climb(protein)
 
-# # fold protein until valid folding
-protein.coordinates = resultsTuple[1]
+# fold protein until valid folding
+protein.coordinates = fold(protein)
 
 xs = []
 ys = []

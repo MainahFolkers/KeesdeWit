@@ -1,65 +1,114 @@
 from Protein_class_MF import *
 from fold_MF import *
-# import matplotlib.pyplot as plt
-# import numpy as np
+import matplotlib.pyplot as plt
+import numpy as np
 
 
-# ------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------
 # EXTREMELY IMPORTANT
 # 
-# File "Protein_class_MF.py" now returns a tuple with (Hbonds, score)
-# 
-# for plotting in file "main.MF.py": store result of calc_score() in variable "Hbondsvar"
-# accessing the actual list of Hbonds from the tuple that calc_score returns:
-# --> Hbondsvar[0]
-# 
-# ------------------------------------------------------------------------------------
+# File "Protein_class_MF.py": function "calc_score" now returns a tuple with (Hbonds, score)
+# --------------------------------------------------------------------------------------------
 
+# this is what we're gonna fold optimally
+protein = Protein("HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH")
 
-
+# hillclimber
 def hill_climb(protein):
 
 	# ---------------------------------------------------------
 	# init beginning
 	# ---------------------------------------------------------
-
-	# defining start points
-
-	# init, first folding is the only folding --> hence also the best one
-	bestFold.coordinates = fold(protein)
-
-	# calculate the score of the first folding
-	# calc_score yields tuple -> score is 2nd thing in the tuple
-	bestScoreVar = bestFold.calc_score()
-	bestScore = bestScoreVar[1]
 	
+	# so that first climb is always an improvement
+	bestScore = 1000000
+
+	# tell the climber that newFold and bestFold are instances of class Protein
+	# (hier zijn credits voor Bas in place -> we misten een instance van class protein.... )
+	newFold = protein
+	bestFold = protein
 
 	# ---------------------------------------------------------
-	# climb that hill!    
+	# climb!    
 	# --------------------------------------------------------- 
 
 	# for now, just some iterations. Later: climbing until no improvements for x iterations
-	for i in range(50):
+	for i in range(10000):
 
 		# calculate current score
-		newFold = fold(protein)
-		newScoreVar = newFold.calc_score()
-		print(newScoreVar[1])
+		newFold.coordinates = fold(protein)
+
+		xs = []
+		ys = []
+		# iterate over amino acids
+		for i in range(newFold.n):
+		    # seperate coordinates in xs and ys
+		    xs.append(newFold.coordinates[i][0])
+		    ys.append(newFold.coordinates[i][1])
+
+		xmin = min(xs)
+		ymin = min(ys)
+		# calculate ranges voor x and y
+		xran = max(xs) - xmin
+		yran = max(ys) - ymin
+
+		# make grid with minimal ranges
+		newFold.make_grid(xran, yran)
+
+		# iterate over amino acids
+		for i in range(newFold.n):
+		    # transform coordinates onto minimal grid
+		    xs[i] = xs[i] - xmin
+		    ys[i] = ys[i] - ymin
+
+		    # place amino acids onto grid
+		    newFold.grid[xs[i]][ys[i]].aa = newFold.chain[i]
+		    newFold.grid[xs[i]][ys[i]].i = i
+
+		newScoreVar = bestFold.calc_score()
+		# print(newScoreVar[1])
 
 		# check if improvement
 		if newScoreVar[1] < bestScore:
-			print("JOEPIIIEEE we zitten in de if")
+			# print("JOEPIIIEEE we zitten in de if")
 			# keep that folding & score
 			bestScore = newScoreVar[1]
 			bestFold = newFold
-		print(newFold.coordinates)
+			print(str(bestScore), " verbetering! :)" )
+		# print(bestFold.coordinates)
 
 	# return best score
 	return bestScore, bestFold
 
-# result = hill_climb(bestFold)
+result = hill_climb(protein)
 # print("score result = ")
-# print(result)
+print(result[0])
+
+# # determine color for point on plot
+# if result.chain[i] == 'H':
+#     col = 'red'
+# else:
+#     col = 'blue'
+
+# plt.scatter(xs[i], ys[i], s=120, zorder=2, color=col)
+# plt.annotate(i, xy=(xs[i], ys[i]), xytext=(xs[i] + 0.05, ys[i] + 0.05), fontsize=20)
+
+# # plot black line behind / between points
+# plt.plot(xs, ys, lw=3, zorder=1, color='black')
+
+# # show grid on plot
+# plt.grid(b=True)
+
+# # set tick spacing to 1
+# plt.xticks(np.arange(min(xs), xran + 1, 1))
+# plt.yticks(np.arange(min(ys), yran  + 1, 1))
+
+# # plot dotted line to visualize H-bond
+# for i in range(abs(protein.score)):
+#     plt.plot(Hbondsvar[0][i], Hbondsvar[0][i + 1], lw=3, zorder=3, color='black', linestyle='--')
+
+# # show plot
+# plt.show()
 
 
 
