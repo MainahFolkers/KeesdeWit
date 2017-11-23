@@ -10,18 +10,45 @@ class Protein:
         self.chain = chain
         # n is amount of amino acids in protein chain
         self.n = len(self.chain)
+        self.directions = []
         self.coordinates = []
+        self.xs = []
+        self.ys = []
         self.xran = 0
         self.yran = 0
-        self.directions = []
-        self.grid = self.make_grid(self.xran, self.yran)
+        self.grid = []
         # stability score is calculated with score function
         self.score = 0
 
-    def make_grid(self, xran, yran):
-        self.xran = xran
-        self.yran = yran
-        self.grid = [[self.AA() for y in range(yran + 1)] for x in range(xran + 1)]
+    def make_grid(self):
+        xs = []
+        ys = []
+        # iterate over amino acids
+        for i in range(self.n):
+            # seperate coordinates in xs and ys
+            xs.append(self.coordinates[i][0])
+            ys.append(self.coordinates[i][1])
+
+        xmin = min(xs)
+        ymin = min(ys)
+        # calculate ranges voor x and y
+        self.xran = max(xs) - xmin
+        self.yran = max(ys) - ymin
+
+        self.grid = [[self.AA() for y in range(self.yran + 1)] for x in range(self.xran + 1)]
+
+        # iterate over amino acids
+        for i in range(self.n):
+            # transform coordinates onto minimal grid
+            xs[i] = xs[i] - xmin
+            ys[i] = ys[i] - ymin
+
+            # place amino acids onto grid
+            self.grid[xs[i]][ys[i]].aa = self.chain[i]
+            self.grid[xs[i]][ys[i]].i = i
+
+        self.xs = xs
+        self.ys = ys
 
     def calc_score(self):
         # lowerbound: worst score = 0
@@ -42,8 +69,7 @@ class Protein:
                     naa = self.grid[r + 1][c].aa
                     # check if there is a H on the right
                     if naa is 'H' and abs(ni-i) is not 1:
-                        Hbonds.append([r, r + 1])
-                        Hbonds.append([c, c])
+                        Hbonds.append([i, ni])
                         score = score - 1
                     # ni is next index
                     ni = self.grid[r][c + 1].i
@@ -51,9 +77,8 @@ class Protein:
                     naa = self.grid[r][c + 1].aa
                     # check if there is a H above
                     if naa is 'H' and abs(ni-i) is not 1:
-                        Hbonds.append([r, r])
-                        Hbonds.append([c, c + 1])
+                        Hbonds.append([i, ni])
                         score = score - 1
+
         self.score = score
-        # print(score)
-        return Hbonds, score
+        return Hbonds

@@ -1,27 +1,27 @@
 from random import *
 
-
-
 # should this be a function in the Protein class?
 def fold(protein):
-    coordinates = [[] for i in range(protein.n)]
+    protein.coordinates = [[] for i in range(protein.n)]
     protein.directions = ['' for i in range(protein.n - 1)]
     x = 0
     y = 0
+
     # first amino acid starts on (x=0, y=0)
-    coordinates[0] = [x, y]
+    protein.coordinates[0] = [x, y]
+
     # second amino acid is always on right (x=x+1, y=0) which represents (x=1, y=0)
     x = x + 1
-    coordinates[1] = [x, y]
+    protein.coordinates[1] = [x, y]
     # first bond is to right
     protein.directions[0] = 'r'
 
     # third amino acid can only bend up or to right
     direcs = ['r', 'u']
     direc = choice(direcs)
-    coordinates[2] = bend(direc, x, y)
-    x = coordinates[2][0]
-    y = coordinates[2][1]
+    protein.coordinates[2] = bend(direc, x, y)
+    x = protein.coordinates[2][0]
+    y = protein.coordinates[2][1]
     # second bond is to right or up
     protein.directions[1] = direc
 
@@ -44,10 +44,10 @@ def fold(protein):
             [nx, ny] = bend(direc, x, y)
 
             # if point on grid is not yet occupied by other amino acid
-            if [nx, ny] not in coordinates:
+            if [nx, ny] not in protein.coordinates:
                 # new coordinates are safed
                 [x, y] = [nx, ny]
-                coordinates[i] = [x, y]
+                protein.coordinates[i] = [x, y]
 
                 # continue with next amino acid
                 i = i + 1
@@ -56,7 +56,7 @@ def fold(protein):
         # if there are no directions left to choose from
         if not direcs:
             return fold(protein)
-    return coordinates
+    return protein
 
 def bend(direc, x, y):
     # u is up
