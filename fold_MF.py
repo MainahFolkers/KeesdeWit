@@ -19,16 +19,16 @@ def fold(protein):
     # third amino acid can only bend up or to right
     direcs = ['r', 'u']
     direc = choice(direcs)
-    protein.coordinates[2] = bend(direc, x, y)
+    protein.coordinates[2] = protein.bend(direc, x, y)
     x = protein.coordinates[2][0]
     y = protein.coordinates[2][1]
     # second bond is to right or up
     protein.directions[1] = direc
 
     # start at fourth amino acid
-    i = 3
+    aa = 3
     # iterate over amino acids
-    while i < protein.n:
+    while aa < protein.n:
         # improvement: remove one direction based on previous direction
         direcs = ['r', 'd', 'l', 'u']
 
@@ -37,38 +37,24 @@ def fold(protein):
             # random choice 1 of 4 directions
             direc = choice(direcs)
             # i - 1 is index of bond
-            protein.directions[i - 1] = direc
+            protein.directions[aa - 1] = direc
             # sample without replacement, remove chosen direction from options
             direcs.remove(direc)
             # calculate new coordinates
-            [nx, ny] = bend(direc, x, y)
+            [nx, ny] = protein.bend(direc, x, y)
 
             # if point on grid is not yet occupied by other amino acid
             if [nx, ny] not in protein.coordinates:
-                # new coordinates are safed
+                # update old x and y
                 [x, y] = [nx, ny]
-                protein.coordinates[i] = [x, y]
+                # new coordinates are safed
+                protein.coordinates[aa] = [nx, ny]
 
                 # continue with next amino acid
-                i = i + 1
+                aa += 1
                 break
 
         # if there are no directions left to choose from
         if not direcs:
-            return fold(protein)
+            return None
     return protein
-
-def bend(direc, x, y):
-    # u is up
-    if direc == 'u':
-        y = y + 1
-    # r is right
-    elif direc == 'r':
-        x = x + 1
-    # d is down
-    elif direc == 'd':
-        y = y - 1
-    # l is left, maybe use else instead of elif
-    elif direc == 'l':
-        x = x - 1
-    return [x, y]

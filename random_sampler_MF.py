@@ -1,25 +1,10 @@
 from Protein_class_MF import *
-from visualize_MF import *
 from fold_MF import *
+from visualize_MF import *
 import matplotlib.pyplot as plt
 from copy import deepcopy
 
-def mut_dir(protein):
-    # randomly choice position in protein to mutate
-    # can the first bond be chosen? no
-    mut = choice(range(1, protein.n - 1))
-    direcs = ['r', 'd', 'l', 'u']
-    # remove original direction from options
-    direcs.remove(protein.directions[mut])
-    # random choice 1 of 3 directions
-    direc = choice(direcs)
-    protein.directions[mut] = direc
-
-    return protein
-
-def hill_climb(protein, ITER):
-    # initial folding with fold_MF.py
-    # improvement: do initial fold with class function
+def rand_samp(protein, ITER):
     new = fold(protein)
     while not new:
         new = fold(protein)
@@ -31,15 +16,14 @@ def hill_climb(protein, ITER):
 
     scores = []
 
-    i = 0
     # improvement: determine how many iterations
-    while i < ITER:
+    i = 0
+    while i <ITER:
 
-        new = deepcopy(best)
-        new = mut_dir(new)
+        new = fold(protein)
 
         # if fold is valid after mutation continue to next iteration
-        if new.fold():
+        if new:
             new.make_grid()
             new.calc_score()
             scores.append(best.score)
@@ -47,10 +31,10 @@ def hill_climb(protein, ITER):
             i += 1
 
             if new.score < best.score:
-                print("Climbing!", new.score, "<", best.score)
+                print("Improving!", new.score, "<", best.score)
                 best = deepcopy(new)
 
-        elif not new.fold():
+        elif not new:
             continue
 
     # plot best score per iteration

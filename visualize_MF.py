@@ -22,8 +22,12 @@ def visualize(protein):
     plt.grid(b=True)
 
     # set tick spacing to 1
-    plt.xticks(np.arange(min(protein.xs), protein.xran + 1, 1))
-    plt.yticks(np.arange(min(protein.ys), protein.yran  + 1, 1))
+    plt.xticks(range(min(protein.xs), protein.xran + 1))
+    plt.yticks(range(min(protein.ys), protein.yran  + 1))
+
+    plt.title("Score = " + str(protein.score), fontsize=40)
+
+    # improvement: plot dotted lines for H-bonds
 
     # show plot
     plt.show()
