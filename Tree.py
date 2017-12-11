@@ -5,45 +5,54 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 from collections import deque
 
-sprotein = Protein("HHH")
-maxdepth = sprotein.n 
-path = []
+sprotein = Protein("HHPHHHPH")
+maxdepth = (sprotein.n-2)
+path = ['r']
 all_direcs = ['r', 'd', 'u', 'l']
+best_score = 1
 
 def depth_path(protein, depth, maxdepth):
-	avail_direcs = all_direcs
 	if depth == maxdepth:
+
+		x, y = 0, 0
+		sprotein.coordinates = [[x, y]]
+
+		aa = 0
+
+		# iterate over amino acids
+		while aa < sprotein.n - 1:
+			[nx, ny] = sprotein.bend(path[aa], x, y)
+			if [nx, ny] not in sprotein.coordinates:
+				# update x and y
+				[x, y] = [nx, ny]
+				# new coordinates are safed
+				sprotein.coordinates.append([x, y])
+				# continue with next amino acid
+				aa += 1
+			elif [nx, ny] in sprotein.coordinates:
+				return None
+
+		grid = sprotein.make_grid()
+		sprotein.calc_score()
+		new_score = sprotein.score
+		# if new_score < best_score:
+		best_score = deepcopy(new_score)
+		print(best_score)
 		print(path)
-		new = Protein.fold(sprotein)
-		while not new:
-			new = Protein.fold(sprotein)
-
-		best = deepcopy(new)
-
-		best.score = 0
-
-		scores = []
-
-		# if fold is valid after mutation continue to next iteration
-		if new:
-			new.make_grid()
-			new.calc_score()
-			scores.append(best.score)
-
-			if new.score < best.score:
-				print(new.score, "<", best.score)
-				best = deepcopy(new)
+		print(sprotein.coordinates)
 
 	if depth < maxdepth:
 		avail_direcs = deepcopy(all_direcs)
-		if depth > 0:
-			if path[depth-1] == 'r':
+		if depth == 0:
+			avail_direcs.remove('d')
+		if depth >= 0:
+			if path[depth] == 'r':
 				avail_direcs.remove('l')
-			elif path[depth-1] == 'd':
+			elif path[depth] == 'd':
 				avail_direcs.remove('u')
-			elif path[depth-1] == 'l':
+			elif path[depth] == 'l':
 				avail_direcs.remove('r')
-			elif path[depth-1] == 'u':
+			elif path[depth] == 'u':
 				avail_direcs.remove('d')
 		for direc in avail_direcs:
 			path.append(direc)
