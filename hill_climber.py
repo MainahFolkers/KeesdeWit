@@ -41,8 +41,8 @@ def mut_fold(protein):
             # continue with next bond
             b += 1
 
-    # if folding is invalid
-    elif [nx, ny] in protein.coordinates:
+        # if folding is invalid
+        elif [nx, ny] in protein.coordinates:
             return None
 
     return protein
@@ -95,7 +95,7 @@ def hill_climb(protein, ITER):
                 best = deepcopy(new)
 
         # if mutated fold is invalid
-    elif not mut_fold(new):
+        elif not mut_fold(new):
             # try to fold again
             continue
 
