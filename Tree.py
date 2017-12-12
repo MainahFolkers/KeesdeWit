@@ -5,13 +5,25 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 from collections import deque
 
-sprotein = Protein("HHPHHHPH")
+sprotein = Protein("HHPHHHPHHHHHHHHHHHHH")
 maxdepth = (sprotein.n-2)
 path = ['r']
 all_direcs = ['r', 'd', 'u', 'l']
-best_score = 1
+best_score = 0
+
+def split_list(alist, wanted_parts=1):
+    length = len(alist)
+    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts] 
+             for i in range(wanted_parts) ]
+
+if maxdepth > 10:
+	list_length = split_list(sprotein.chain, wanted_parts=(int(sprotein.n/10)))
+	for i in list_length:
+		maxdepth = len(i)
+
 
 def depth_path(protein, depth, maxdepth):
+	#global best_score
 	if depth == maxdepth:
 
 		x, y = 0, 0
@@ -20,7 +32,7 @@ def depth_path(protein, depth, maxdepth):
 		aa = 0
 
 		# iterate over amino acids
-		while aa < sprotein.n - 1:
+		while aa < maxdepth + 1:
 			[nx, ny] = sprotein.bend(path[aa], x, y)
 			if [nx, ny] not in sprotein.coordinates:
 				# update x and y
@@ -32,14 +44,12 @@ def depth_path(protein, depth, maxdepth):
 			elif [nx, ny] in sprotein.coordinates:
 				return None
 
-		grid = sprotein.make_grid()
-		sprotein.calc_score()
-		new_score = sprotein.score
+		#grid = sprotein.make_grid()
+		#sprotein.calc_score()
+		#new_score = sprotein.score
 		# if new_score < best_score:
-		best_score = deepcopy(new_score)
-		print(best_score)
-		print(path)
-		print(sprotein.coordinates)
+		# 	best_score = new_score
+		# 	return best_score
 
 	if depth < maxdepth:
 		avail_direcs = deepcopy(all_direcs)
@@ -58,7 +68,9 @@ def depth_path(protein, depth, maxdepth):
 			path.append(direc)
 			depth_path(path, depth+1, maxdepth)
 			path.pop()
-	return path
+			
 depth_path(path, 0, maxdepth)
+print(best_score)
+print(sprotein.coordinates)
 
         
