@@ -3,33 +3,32 @@ from copy import deepcopy
 import csv
 
 def rand_samp(protein, ITER):
-    # open output file which stores best scores per iteration
-    ofile  = open('scores.csv', "w", newline="")
-    writer = csv.writer(ofile, delimiter=",")
-
+    # # open output file which stores best scores per iteration
+    # ofile  = open('scores.csv', "w", newline="")
+    # writer = csv.writer(ofile, delimiter=",")
+    
     # fold protein randomly
     new = protein.rand_fold()
-    # until valid folding
-    while not new:
-        new = protein.rand_fold()
 
+    # we have only one fold, so that is the current best
     best = deepcopy(new)
-    # first folding will always be an improvement
-    # because minimum score = 0
-    best.score = 1
 
+    # set impossible best score (minimum score = 0) so first fold always improves
+    best.score = 1
+    
+    # array to see score progress
     scores = []
 
     # improvement: determine how many iterations
     i = 0
-    while i <ITER:
+    while i in range(ITER):
 
-        # print each 100th iteration
-        if i % (ITER/100) == 0:
-            print(i)
+        # # print each 100th iteration
+        # if i % (ITER/100) == 0:
+        #    print(i)
 
         # fold protein randomly again
-        new = protein.rand_fold()
+        new.rand_fold()
 
         # if fold is valid
         if new:
@@ -38,7 +37,7 @@ def rand_samp(protein, ITER):
             # caluclate score
             new.calc_score()
             # write i and best.score to output file
-            writer.writerow([i, best.score])
+            # writer.writerow([i, best.score])
 
             # continue to next iteration
             i += 1
@@ -54,7 +53,11 @@ def rand_samp(protein, ITER):
             continue
 
     # close output file
-    ofile.close()
+    # ofile.close()
 
     print("Random sampler: Best score = ", best.score)
+
+    # kan later weg!
+    print(best.coordinates)
+    
     return best
