@@ -58,4 +58,4 @@ def hill_climb(protein, ITER):
 
     visualize(best)
     print("Best score = ", best.score)
-    return best
+    return best 
