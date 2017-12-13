@@ -19,7 +19,8 @@ def split_list(alist, wanted_parts=1):
 if maxdepth > 10:
 	list_length = split_list(sprotein.chain, wanted_parts=(int(sprotein.n/10)))
 	for i in list_length:
-		maxdepth = len(i)
+		maxdepth = (len(i) - 2)
+		part_protein = Protein(i)
 
 
 def depth_path(protein, depth, maxdepth):
@@ -44,12 +45,12 @@ def depth_path(protein, depth, maxdepth):
 			elif [nx, ny] in sprotein.coordinates:
 				return None
 
-		#grid = sprotein.make_grid()
-		#sprotein.calc_score()
-		#new_score = sprotein.score
-		# if new_score < best_score:
-		# 	best_score = new_score
-		# 	return best_score
+		grid = part_protein.make_grid()
+		sprotein.calc_score()
+		new_score = sprotein.score
+		if new_score < best_score:
+			best_score = new_score
+			return best_score
 
 	if depth < maxdepth:
 		avail_direcs = deepcopy(all_direcs)
@@ -68,9 +69,10 @@ def depth_path(protein, depth, maxdepth):
 			path.append(direc)
 			depth_path(path, depth+1, maxdepth)
 			path.pop()
-			
-depth_path(path, 0, maxdepth)
-print(best_score)
-print(sprotein.coordinates)
+for r in list_length:		
+	depth_path(path, 0, maxdepth)
+	print(best_score)
+	print(path)
+	print(sprotein.coordinates)
 
         
