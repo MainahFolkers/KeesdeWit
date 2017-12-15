@@ -16,8 +16,8 @@ By downloading and running AOM.py a test to see what the effect of varying the a
 
 ## Built With
 
-* Sublime2 text editor [add link]
-* Atom text editor [add link]
+* Sublime2 text editor https://www.sublimetext.com/
+* Atom text editor https://atom.io/
 
 ## Versioning
 
