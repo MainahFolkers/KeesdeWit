@@ -141,11 +141,32 @@ if maxdepth > 9:
 		total_best_direc.append('d')
 		#visualize(sprotein)
 		num += 1
-		sprotein = Protein(protein)
-		sprotein.directions = total_best_direc
-		print("DIT IS DE BESTE VOUWING: "+str(sprotein.directions))
 		print(len(sprotein.directions))
-		print(sprotein.chain)
+
+	total_best_direc.pop()	
+	sprotein = Protein(protein)
+	sprotein.directions = total_best_direc
+	print(len(sprotein.directions))
+	print(sprotein.chain)
+	print("DIT IS DE BESTE VOUWING: "+str(sprotein.directions))
+		
+	print(sprotein.xs)
+	 # first AA starts on (x = 0, y = 0)
+	sprotein.x, sprotein.y = 0, 0
+	# NOTE: the 'self'-part in x and y is necessary for check_val() because scope
+	sprotein.coordinates[0] = [sprotein.x, sprotein.y]
+
+	amino_coord_start = 0
+
+	for amino_coord in range(amino_coord_start, sprotein.n):
+		if sprotein.check_val(amino_coord, amino_coord - 1):
+			# if end of chain is reached, output valid fold
+			if amino_coord == sprotein.n - 1:
+				print("HIJ IS VALIDE")
+				grid = sprotein.make_grid()
+				score = sprotein.calc_score()
+				print("DIT IS DE SCORE: " + str(score))
+
 
 else:
 
