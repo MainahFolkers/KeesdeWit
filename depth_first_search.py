@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 from Protein_class import *
-from visualize_MF import *
 import matplotlib.pyplot as plt
 from copy import deepcopy
 from collections import deque
 import math
 
-protein = "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH"
+protein = "HHPHPHPHPH"
 sprotein = Protein(protein)
 maxdepth = (sprotein.n-2)
 path = ['r']
@@ -179,4 +178,4 @@ else:
 	print(best_coords)
 	print(best_score_list)
 	print(best_directions)
-	visualize(sprotein)
+	sprotein.visualize

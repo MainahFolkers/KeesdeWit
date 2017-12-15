@@ -40,3 +40,12 @@ vis = input("Visualize? (y/n) ")
 if vis == 'y':
     # visualize best hill climbed protein
     visualize(protein)
+
+# Depth first search algorithm 
+protein = depth_path(path, 0, maxdepth, 0)
+
+vis = input("Visualize? (y/n) ")
+
+if vis == 'y':
+    # visualize best hill climbed protein
+    visualize(protein)
