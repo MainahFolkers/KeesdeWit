@@ -1,13 +1,10 @@
 from Protein_class import *
 from copy import deepcopy
-import csv
 
-def hill_climb(protein, ITER):
-    # # open output file which stores best scores per iteration
-    # ofile  = open('hill_scores.csv', "w", newline="")
-    # writer = csv.writer(ofile, delimiter=",")
+def hill_climb(protein, ITER, AOM = 1):
+    scores = []
 
-    # fold protein randomly
+    # fold protein randomly until valid folding
     new = protein.rand_fold()
 
     # this first folding is the only folding, so the current best
@@ -15,48 +12,45 @@ def hill_climb(protein, ITER):
 
     # set impossible best score (minimum score = 0) so first fold always improves
     best.score = 1
-    
 
-    # array to see the score progress
-    scores = []
-
-    # improvement: determine how many iterations
-    for i in range(ITER):
-        # # print each 100th iteration
-        # if i % (ITER/100) == 0:
-        #     print(i)
-
+    i = 0
+    while i < ITER:
         # new folding continues on current best fold
         new = deepcopy(best)
 
         # randomly mutate a number of directions
-        new = new.mut_dir(14)
+        new.mut_dir(AOM)
 
-        # continue mutating and trying to fold until valid folding
-        while new.mut_fold == None:
-            new = new.mut_dir()
+        # fold mutated protein
+        new = new.mut_fold()
 
-        # when valid mutated fold has been made: place protein on grid
-        new.make_grid()
-        # caluclate score
-        new.calc_score()
-        # add best score to scores array
-        scores.append(best.score)
+        # if the folding is valid
+        if new:
+            # place protein on grid
+            new.make_grid()
+            # caluclate score
+            new.calc_score()
 
-        # if score improved, continue climbing with this fold
-        if new.score < best.score:
-            # print to terminal
-            print("Climbing!", new.score, "<", best.score)
-            # save new best fold to continue
-            best = deepcopy(new)
+            # save best score per iteration
+            scores.append(best.score)
 
-    # # write scores to output file
-    # writer.writerow(scores)
-    # # close output file
-    # ofile.close()
+            # continue to next iteration
+            i += 1
 
-    # print findings to terminal
-    print("Hill climber: Best score = ", best.score)
+            # if score improved
+            if new.score < best.score:
+                print("Climbing!", new.score, "<", best.score)
+                # save new best fold
+                best = deepcopy(new)
+
+    print("Hill climber: Best score = ", best.score, "AOM = ", AOM)
+
+    with open("AOM=" + str(AOM) + '_' + protein.chain +".txt", 'a+') as ofile:
+        ofile.write("AOM=" + str(AOM) + ',')
+        for score in scores:
+            ofile.write(str(score) + ',')
+        ofile.write('\n')
+    ofile.close()
 
     # output best protein
     return best
