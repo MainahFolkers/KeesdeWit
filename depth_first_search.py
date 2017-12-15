@@ -6,13 +6,16 @@ from copy import deepcopy
 from collections import deque
 import math
 
-sprotein = Protein("HCPHPHPHCHHHHPCCPPHPPPHPPPPCPPPHPPPHPHHHHCHPHPHPHH")
+protein = "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH"
+sprotein = Protein(protein)
 maxdepth = (sprotein.n-2)
 path = ['r']
 all_direcs = ['r', 'd', 'u', 'l']
 best_score = 0
 best_score_list = []
-best_directions = []
+best_directions = deque()
+best_coords = deque()
+total_best_direc = []
 
 
 # splits longer proteins in seperate lists
@@ -58,7 +61,8 @@ def depth_path(protein, depth, maxdepth, bestscore):
 		# optimal_score = H_count
 		if new_score < best_score :
 			best_score = new_score
-			best_directions.append(deepcopy(path))
+			best_directions.appendleft(deepcopy(path))
+			best_coords.appendleft(deepcopy(sprotein.coordinates))
 			# print(best_directions)
 			# return best_score
 
@@ -105,26 +109,53 @@ if maxdepth > 9:
 
 	# runs the depth first search for the amount of wanted lists, visualizes the folds,
 	# prints the best score, coordinates and directions 
+	num = 0
 	for i in list_length:
 		maxdepth = (len(i) - 2)
 		sprotein = Protein(i)
 		best_score = 0 
+
 		depth_path(path, 0, maxdepth, best_score)
 		best_score_list.append(best_score)
+
+		print(best_score_list)
+
+		sprotein = Protein(i)
+
+		depth_path(sprotein, 0, maxdepth, best_score_list[num])
+
+		best_directions.rotate(-1)
+
+		while (num + 1) < len(best_directions):
+			best_directions.popleft()
+
+		d = 0
+		best_direc = best_directions[num]
+		while d < len(best_direc):
+			total_best_direc.append(best_direc[d])
+			# if total_best_direc[d] == 'r' and total_best_direc[d-1] == 'l':
+				# while d < len(best_direc):
+				# 	if total_best_direc[d] == 'r':
+				# 		total_best_direc[d] = 'd'
+			d += 1
+		total_best_direc.append('d')
+		#visualize(sprotein)
+		num += 1
+		sprotein = Protein(protein)
+		sprotein.directions = total_best_direc
+		print("DIT IS DE BESTE VOUWING: "+str(sprotein.directions))
+		print(len(sprotein.directions))
+		print(sprotein.chain)
+
 else:
 
 	# runs the depth first search for the protein visualizes the folds,
 	# prints the best score, coordinates and directions
 	depth_path(path, 0, maxdepth, best_score)
-	#visualize(sprotein)
-
-num = 0
-for s in best_score_list:
-	sprotein = Protein(list_length[num])
-	depth_path(path, 0, maxdepth, s)
-	print(s)
-	print(sprotein.coordinates)
+	best_score_list.append(best_score)
+	print(best_score_list)
+	depth_path(path, 0, maxdepth, best_score_list)
+	print(best_coords)
 	print(best_score_list)
 	print(best_directions)
-	# visualize(sprotein)
-	num += 1
+	visualize(sprotein)
