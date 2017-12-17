@@ -2,7 +2,7 @@ from Protein_class import *
 from copy import deepcopy
 from random import randint
 
-def sim_anneal(protein, ITER, AOM = 1):
+def sim_anneal(protein, ITER, AOM = 1, cool):
     scores = []
 
     # fold protein randomly
@@ -18,14 +18,12 @@ def sim_anneal(protein, ITER, AOM = 1):
     # in temp: dividing by zero impossible, so start at 1
     i = 0
     while i < ITER:
-        
         # mutate some directions in current  best fold
         new = deepcopy(best)
         new.mut_dir(AOM)
         
         # continue mutating and trying to fold until valid folding
         if new.mut_fold():
-            
             # when valid mutated fold has been made: place protein on grid
             new.make_grid()
             # caluclate score
@@ -37,8 +35,11 @@ def sim_anneal(protein, ITER, AOM = 1):
             # continue to next iteration
             i += 1
 
-            # temperature is acceptance probability: hyperbolic cooling schedule
-            temp = 100 / i
+            # temperature is acceptance probability: linear / hyperbolic cooling schedule
+            if cool == 'linear':
+                temp = (ITER - i) / 100
+            elif cool == 'hyperbolic':
+                temp = 100 / i
 
             # if score improved, accept new fold as best fold
             if new.score < best.score:
@@ -48,7 +49,7 @@ def sim_anneal(protein, ITER, AOM = 1):
                 # if score deteriorated, accept new fold according to temperature
             else:
                 # determine acceptance for this worse score
-                chance = randint(0, 100)
+                chance = uniform(0, 100)
                 # if change is below current temperature, accept worse fold
                 if chance < temp:
                     print("Fold accepted anyway!")
