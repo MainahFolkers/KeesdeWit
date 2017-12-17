@@ -72,10 +72,12 @@ def depth_first_search(protein):
 		max_C_score = (((C_count/2) * 5) - 2.5) + max_H_score
 
 	num = 0
-	for fold in folds:
+	for f in folds:
 		num += 1
-		new.directions = deepcopy(fold)
-
+		print(num)
+		print(len(folds))
+		new.directions = deepcopy(f)
+		print(new.directions)
 		x, y = 0, 0
 
 		new.coordinates = [[x, y]]
@@ -83,7 +85,7 @@ def depth_first_search(protein):
 		aa = 0
 
 		# iterate over amino acids --> TO DO: replace next block with calling check_val() method of protein
-		while aa < maxdepth:
+		while aa < maxdepth+1:
 			[nx, ny] = new.bend(new.directions[aa], x, y)
 			if [nx, ny] not in new.coordinates:
 				# update x and y
@@ -92,18 +94,20 @@ def depth_first_search(protein):
 				new.coordinates.append([x, y])
 				# continue with next amino acid
 				aa += 1
-			elif [nx, ny] in new.coordinates:
-				print("HIER GAAT HET FOUT")
+			# elif [nx, ny] in new.coordinates:
+			# 	return None
 
 		# creates a grid and calculates scores from that
+		print(new.coordinates)
 		new.make_grid()
 		new.calc_score()
 
 		# scores.append(best.score)
 
-		# evaluates whether current score is better than the best score found
+		# evaluates whether new score is better than the best score found
 		# if new score is better, it becomes new best score and its' directions are saved
 		# optimal_score = H_count
+		# print(new.directions)
 		if new.score < protein.score:
 			protein = deepcopy(new)
 			# print("PROTEIN SCORE IS NU: "+str(protein.score))
@@ -130,9 +134,6 @@ def depth_first_search(protein):
 				elif abs(new.score) < max_C_score:
 					if abs(new.score) >= (C_count + H_count)/2:
 						print("SCORE IS GELIJK AAN HET AANTAL GELADEN MOLECULEN NAMELIJK: "+str(new.score))
-		# print("NEW SCORE IS: "+str(new.score))
-		print(new.directions)
-		print(num)
 	# if a protein is longer than 10 amino acids (so a maxdepth of 8) the protein is split
 	# into lists with a max length of 10 amino acids
 	# if maxdepth > 9:
