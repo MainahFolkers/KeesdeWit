@@ -1,7 +1,6 @@
 from random_sampler import *
 from hill_climber import *
 from sim_anneal import *
-from visualize import *
 import matplotlib.pyplot as plt
 
 chain = input("Chain: (HHPHHHPH)")
