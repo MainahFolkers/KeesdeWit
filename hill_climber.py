@@ -1,7 +1,7 @@
 from Protein_class import *
 from copy import deepcopy
 
-def hill_climb(protein, ITER, AOM = 1):
+def hill_climb(protein, ITER, AOM):
     scores = []
 
     # fold protein randomly until valid folding
@@ -36,11 +36,11 @@ def hill_climb(protein, ITER, AOM = 1):
 
             # if score improved
             if new.score < best.score:
-                print("Climbing!", new.score, "<", best.score)
+                print("Climbing!", new.score, "<", best.score, "i =", i)
                 # save new best fold
                 best = deepcopy(new)
 
-    print("Hill climber: Best score = ", best.score)
+    #print("Hill climber: Best score = ", best.score)
 
     with open(protein.chain +".txt", 'a+') as ofile:
         ofile.write(str(AOM) + ',')
