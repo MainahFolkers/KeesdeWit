@@ -30,10 +30,12 @@ vis = input("Visualize? (y/n) ")
 if vis == 'y':
     # visualize best hill climbed protein
     visualize(protein)
+    
+# ask user input for cooling schedule: linear / hyperbolic
+cool = input("Cooling schedule: linear / hyperbolic: ")
 
 # simmulated annealing algorithm
-protein = sim_anneal(protein, ITER, AOM)
-
+protein = sim_anneal(protein, ITER, cool, AOM)
 vis = input("Visualize? (y/n) ")
 
 if vis == 'y':
