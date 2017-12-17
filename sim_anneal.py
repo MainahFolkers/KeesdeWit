@@ -1,6 +1,6 @@
 from Protein_class import *
 from copy import deepcopy
-from random import randint
+from random import uniform
 
 def sim_anneal(protein, ITER, AOM = 1, cool):
     scores = []
