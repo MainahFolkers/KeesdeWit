@@ -309,12 +309,8 @@ class Protein:
             elif self.chain[aa] is 'P':
                 col = 'blue'
 
-            print("aa = ", aa)
-            print("xs = ", self.xs)
-            print("ys = ", self.ys)
-
             plt.scatter(self.xs[aa], self.ys[aa], s=120, zorder=2, color=col)
-            plt.annotate(aa, xy=(self.xs[aa], self.ys[aa]), xytext=(self.xs[aa] + 0.05, self.ys[aa] + 0.05), fontsize=20)
+            plt.annotate(aa, xy=(self.xs[aa], self.ys[aa]), xytext=(self.xs[aa] + 0.05, self.ys[aa] + 0.05), fontsize=10)
 
         # plot black line behind / between points
         plt.plot(self.xs, self.ys, lw=3, zorder=1, color='black')
@@ -329,4 +325,4 @@ class Protein:
         plt.title("Score = " + str(self.score), fontsize=30)
 
         # save figure
-        plt.savefig(self.chain + '_' + str(self.score) + '_AOM=' + str(AOM) + '_run=' + str(run) + '.jpg')
+        plt.savefig(self.chain + '_score=' + str(self.score) + '_AOM=' + str(AOM) + '_run=' + str(run) + '.jpg')

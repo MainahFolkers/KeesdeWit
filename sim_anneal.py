@@ -21,7 +21,7 @@ def sim_anneal(protein, ITER, cool, AOM = 1):
         # mutate some directions in current  best fold
         new = deepcopy(best)
         new.mut_dir(AOM)
-        
+
         # continue mutating and trying to fold until valid folding
         if new.mut_fold():
             # when valid mutated fold has been made: place protein on grid
@@ -36,9 +36,9 @@ def sim_anneal(protein, ITER, cool, AOM = 1):
             i += 1
 
             # temperature is acceptance probability: linear / hyperbolic cooling schedule
-            if cool == 'linear':
+            if cool is "linear":
                 temp = (ITER - i) / 100
-            elif cool == 'hyperbolic':
+            elif cool is "hyperbolic":
                 temp = 100 / i
 
             # if score improved, accept new fold as best fold
@@ -55,7 +55,10 @@ def sim_anneal(protein, ITER, cool, AOM = 1):
                     print("Fold accepted anyway!")
                     best = deepcopy(new)
 
-    print("Simulated annealing: Best score = ", best_score)
+            if best_score < all_time_best.score:
+                all_time_best = deepcopy(best)
+
+    print("Simulated annealing: Best score = ", all_time_best.score)
 
     # output best protein
-    return best
+    return all_time_best

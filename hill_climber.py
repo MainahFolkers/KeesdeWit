@@ -21,11 +21,8 @@ def hill_climb(protein, ITER, AOM = 1):
         # randomly mutate a number of directions
         new.mut_dir(AOM)
 
-        # fold mutated protein
-        new = new.mut_fold()
-
         # if the folding is valid
-        if new:
+        if new.mut_fold():
             # place protein on grid
             new.make_grid()
             # caluclate score
@@ -43,10 +40,10 @@ def hill_climb(protein, ITER, AOM = 1):
                 # save new best fold
                 best = deepcopy(new)
 
-    print("Hill climber: Best score = ", best.score, "AOM = ", AOM)
+    print("Hill climber: Best score = ", best.score)
 
-    with open("AOM=" + str(AOM) + '_' + protein.chain +".txt", 'a+') as ofile:
-        ofile.write("AOM=" + str(AOM) + ',')
+    with open(protein.chain +".txt", 'a+') as ofile:
+        ofile.write(str(AOM) + ',')
         for score in scores:
             ofile.write(str(score) + ',')
         ofile.write('\n')
