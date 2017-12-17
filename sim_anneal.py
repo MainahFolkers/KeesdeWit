@@ -13,16 +13,16 @@ def sim_anneal(protein, ITER, AOM = 1):
 
     # set impossible best score (minimum score = 0) so first fold always improves
     best.score = 1
-
-    i = 1
+    best_score = 1
 
     # in temp: dividing by zero impossible, so start at 1
-    while i < ITER + 1
+    i = 1
+    while i < ITER + 1:
         # new folding continues on current best fold
         new = deepcopy(best)
 
         # randomly mutate a number of directions
-        new = new.mut_dir(AOM)
+        new.mut_dir(AOM)
 
         # continue mutating and trying to fold until valid folding
         if new.mut_fold():
@@ -32,28 +32,29 @@ def sim_anneal(protein, ITER, AOM = 1):
             new.calc_score()
 
             # save best score per iteration
-            scores.append(best.score)
+            scores.append(best_score)
 
             # continue to next iteration
             i += 1
 
-        # temperature is acceptance probability -> for now linearly declining
-        temp = 100 / i
+            # temperature is acceptance probability -> for now linearly declining
+            temp = 100 / i
 
-        # if score improved, accept new fold as best fold
-        if new.score < best.score:
-            print("Improving!", new.score, "<", best.score)
-            best = deepcopy(new)
-        # if score deteriorated, accept new fold according to temperature
-        else:
-            # determine acceptance for this worse score
-            chance = randint(0, 100)
-            # if change is below current temperature, accept worse fold
-            if chance < temp:
-                print("Fold accepted anyway!")
+            # if score improved, accept new fold as best fold
+            if new.score < best.score:
+                print("Improving!", new.score, "<", best.score)
                 best = deepcopy(new)
+                best_score = deepcopy(best.score)
+                # if score deteriorated, accept new fold according to temperature
+            else:
+                # determine acceptance for this worse score
+                chance = randint(0, 100)
+                # if change is below current temperature, accept worse fold
+                if chance < temp:
+                    print("Fold accepted anyway!")
+                    best = deepcopy(new)
 
-    print("Simulated annealing: Best score = ", best.score)
+    print("Simulated annealing: Best score = ", best_score)
 
     # output best protein
     return best
