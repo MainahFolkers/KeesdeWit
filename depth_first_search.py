@@ -5,177 +5,144 @@ from copy import deepcopy
 from collections import deque
 import math
 
-protein = "HHPHPHPHPH"
-sprotein = Protein(protein)
-maxdepth = (sprotein.n-2)
-path = ['r']
-all_direcs = ['r', 'd', 'u', 'l']
-best_score = 0
-best_score_list = []
-best_directions = deque()
-best_coords = deque()
-total_best_direc = []
+def depth_first_search(protein):
+	maxdepth = (protein.n-2)
+	all_direcs = ['r', 'd', 'u', 'l']
+	scores = []
+	new = protein
+	best = deepcopy(new)
+	best.score = 0
+	print(best)
 
+	# # splits longer proteins in seperate lists
+	# def split_list(alist, wanted_parts=1):
+	#     length = len(alist)
+	#     return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts] 
+	#              for i in range(wanted_parts) ]
 
-# splits longer proteins in seperate lists
-def split_list(alist, wanted_parts=1):
-    length = len(alist)
-    return [ alist[i*length // wanted_parts: (i+1)*length // wanted_parts] 
-             for i in range(wanted_parts) ]
+	# actual depth-first search
+	def depth_path(protein, depth, maxdepth, bestscore):
+		# if current depth is smaller than maxdepth, new directions are chosen constructively
+		if depth < maxdepth:
+			avail_direcs = deepcopy(all_direcs)
 
-# actual depth-first search
-def depth_path(protein, depth, maxdepth, bestscore):
-	global best_score
-
-	# if max depth is reached a chosen directions are turned into coordinates
-	if depth == maxdepth:
-
-		x, y = 0, 0
-		sprotein.coordinates = [[x, y]]
-
-		aa = 0
- 
-		# iterate over amino acids --> TO DO: replace next block with calling check_val() method of protein
-		while aa < maxdepth + 1:
-			[nx, ny] = sprotein.bend(path[aa], x, y)
-			if [nx, ny] not in sprotein.coordinates:
-				# update x and y
-				[x, y] = [nx, ny]
-				# new coordinates are safed
-				sprotein.coordinates.append([x, y])
-				# continue with next amino acid
-				aa += 1
-			elif [nx, ny] in sprotein.coordinates:
-				return None
-
-		# creates a grid and calculates scores from that
-		grid = sprotein.make_grid()
-		sprotein.calc_score()
-		
-
-		# evaluates whether current score is better than the best score found
-		# if new score is better, it becomes new best score and its' directions are saved
-		new_score = sprotein.score
-		new_coords = sprotein.coordinates
-		# optimal_score = H_count
-		if new_score < best_score :
-			best_score = new_score
-			best_directions.appendleft(deepcopy(path))
-			best_coords.appendleft(deepcopy(sprotein.coordinates))
-			# print(best_directions)
-			# return best_score
-
-	# if current depth is smaller than maxdepth, new directions are chosen constructively
-	elif depth < maxdepth:
-		avail_direcs = deepcopy(all_direcs)
-
-		# because the first direction is already set from the start (see line 11) first direction to choose is
-		# actually the second bond
-		if depth == 0:
-			avail_direcs.remove('d')
-		# from third bond forward, directions are chosen constructively
-		if depth >= 0:
-			if path[depth] == 'r':
-				avail_direcs.remove('l')
-			elif path[depth] == 'd':
-				avail_direcs.remove('u')
-			elif path[depth] == 'l':
-				avail_direcs.remove('r')
-			elif path[depth] == 'u':
+			# Because we want to eliminate as many mirror immages as possible, first direction
+			# is always set to right
+			if depth == 0:
+				protein.directions.append('r')
 				avail_direcs.remove('d')
-		# the actual recursive part of the depth-first search
-		for direc in avail_direcs:
-			path.append(direc)
-			# H_count = 0
-			# for i in range(0,depth+1):
-			# #for H in sprotein.chain:
-			# 	if sprotein.chain[i] == "H":
-			# 		H_count += 1
-			# print(H_count)
-			depth_path(path, depth+1, maxdepth, 0)
-			path.pop()
- 
-# if a protein is longer than 10 amino acids (so a maxdepth of 8) the protein is split
-# into lists with a max length of 10 amino acids
-if maxdepth > 9:
+				avail_direcs.remove('l')
+			# from third bond forward, directions are chosen constructively
+			elif depth > 0:
+				if protein.directions[depth] == 'r':
+					avail_direcs.remove('l')
+				elif protein.directions[depth] == 'd':
+					avail_direcs.remove('u')
+				elif protein.directions[depth] == 'l':
+					avail_direcs.remove('r')
+				elif protein.directions[depth] == 'u':
+					avail_direcs.remove('d')
+			# the actual recursive part of the depth-first search
+			for direc in avail_direcs:
+				protein.directions.append(direc)
+				depth_path(protein, depth+1, maxdepth, 0)
+				protein.directions.pop()
 
-	# divides the length of the protein and rounds it up to the nearest integer
-	num_of_list = math.ceil(sprotein.n/10)
+		# if max depth is reached a chosen directions are turned into coordinates
+		elif depth == maxdepth:
 
-	# splits the protein into the number of wanted lists (num_of_list)
-	list_length = split_list(sprotein.chain, wanted_parts= num_of_list)
-	print(list_length)
+			H_count = 0
+			for i in range(0,depth+1):
+					if protein.chain[i] == "H":
+						H_count += 1
 
-	# runs the depth first search for the amount of wanted lists, visualizes the folds,
-	# prints the best score, coordinates and directions 
-	num = 0
-	for i in list_length:
-		maxdepth = (len(i) - 2)
-		sprotein = Protein(i)
-		best_score = 0 
+			if H_count%2 == 0:
+				max_H_score = H_count/2
+			else:
+				max_H_score = (H_count/2) - 0.5
 
-		depth_path(path, 0, maxdepth, best_score)
-		best_score_list.append(best_score)
+			C_count = 0
+			for i in range(0,depth+1):
+					if protein.chain[i] == "C":
+						C_count += 1
 
-		print(best_score_list)
+			if C_count%2 == 0:
+				max_C_score = ((C_count/2) * 5) + max_H_score
+			else:
+				max_C_score = (((C_count/2) * 5) - 2.5) + max_H_score
 
-		sprotein = Protein(i)
+			x, y = 0, 0
+			protein.coordinates = [[x, y]]
 
-		depth_path(sprotein, 0, maxdepth, best_score_list[num])
+			aa = 0
+	 
+			# iterate over amino acids --> TO DO: replace next block with calling check_val() method of protein
+			while aa < maxdepth+1:
+				[nx, ny] = protein.bend(protein.directions[aa], x, y)
+				if [nx, ny] not in protein.coordinates:
+					# update x and y
+					[x, y] = [nx, ny]
+					# new coordinates are safed
+					protein.coordinates.append([x, y])
+					# continue with next amino acid
+					aa += 1
+				elif [nx, ny] in protein.coordinates:
+					return None
 
-		best_directions.rotate(-1)
+			new = protein
+			# creates a grid and calculates scores from that
+			protein.make_grid()
+			protein.calc_score()
 
-		while (num + 1) < len(best_directions):
-			best_directions.popleft()
+			scores.append(best.score)
 
-		d = 0
-		best_direc = best_directions[num]
-		while d < len(best_direc):
-			total_best_direc.append(best_direc[d])
-			# if total_best_direc[d] == 'r' and total_best_direc[d-1] == 'l':
-				# while d < len(best_direc):
-				# 	if total_best_direc[d] == 'r':
-				# 		total_best_direc[d] = 'd'
-			d += 1
-		total_best_direc.append('d')
-		#visualize(sprotein)
-		num += 1
-		print(len(sprotein.directions))
+			# evaluates whether current score is better than the best score found
+			# if new score is better, it becomes new best score and its' directions are saved
+			# optimal_score = H_count
+			if new.score < best.score:
+				if C_count == 0:
+					print("AANTAL H'S IS: "+str(H_count))
+					print(max_H_score)
+					if abs(new.score) > max_H_score:
+						print("SCORE IS GROTER DAN HET AANTAL H'S GEDEELD DOOR 2 NAMELIJK: "+str(new.score))
+						best = deepcopy(new)
+					elif abs(new.score) == max_H_score:
+						print("SCORE IS GELIJK AAN HET AANTAL H'S GEDEELD DOOR 2 NAMELIJK: "+str(new.score))
+					elif abs(new.score) < max_H_score:
+						print("SCORE IS LAGER DAN HET AANTAL H'S GEDEELD DOOR 2 NAMELIJK: "+str(new.score))
+				else:
+					print("AANTAL H'S IS: "+str(H_count))
+					print(max_H_score)
+					print("AANTAL C'S IS: "+str(C_count))
+					print(max_C_score)
+					if abs(new.score) > max_C_score:
+						print("SCORE IS GROTER DAN HET AANTAL C'S GEDEELD DOOR 2 NAMELIJK: "+str(new.score))
+						best = deepcopy(new)
+					elif abs(new.score) == max_C_score:
+						print("SCORE IS GELIJK AAN HET AANTAL C'S GEDEELD DOOR 2 NAMELIJK: "+str(new.score))
+					elif abs(new.score) < max_C_score:
+						if abs(new.score) >= (C_count + H_count)/2:
+							print("SCORE IS GELIJK AAN HET AANTAL GELADEN MOLECULEN NAMELIJK: "+str(new.score))
+				# best_score = new.score
+				# best_directions.appendleft(deepcopy(path))
+				# best_coords.appendleft(deepcopy(protein.coordinates))
 
-	total_best_direc.pop()	
-	sprotein = Protein(protein)
-	sprotein.directions = total_best_direc
-	print(len(sprotein.directions))
-	print(sprotein.chain)
-	print("DIT IS DE BESTE VOUWING: "+str(sprotein.directions))
-		
-	print(sprotein.xs)
-	 # first AA starts on (x = 0, y = 0)
-	sprotein.x, sprotein.y = 0, 0
-	# NOTE: the 'self'-part in x and y is necessary for check_val() because scope
-	sprotein.coordinates[0] = [sprotein.x, sprotein.y]
+	# if a protein is longer than 10 amino acids (so a maxdepth of 8) the protein is split
+	# into lists with a max length of 10 amino acids
+	# if maxdepth > 9:
 
-	amino_coord_start = 0
-
-	for amino_coord in range(amino_coord_start, sprotein.n):
-		if sprotein.check_val(amino_coord, amino_coord - 1):
-			# if end of chain is reached, output valid fold
-			if amino_coord == sprotein.n - 1:
-				print("HIJ IS VALIDE")
-				grid = sprotein.make_grid()
-				score = sprotein.calc_score()
-				print("DIT IS DE SCORE: " + str(score))
+	# 	# divides the length of the protein and rounds it up to the nearest integer
+	# 	num_of_list = math.ceil(protein.n/10)
 
 
-else:
+
+	# else:
+
 
 	# runs the depth first search for the protein visualizes the folds,
 	# prints the best score, coordinates and directions
-	depth_path(path, 0, maxdepth, best_score)
-	best_score_list.append(best_score)
-	print(best_score_list)
-	depth_path(path, 0, maxdepth, best_score_list)
-	print(best_coords)
-	print(best_score_list)
-	print(best_directions)
-	sprotein.visualize
+	depth_path(protein, 0, maxdepth, best.score)
+	print(best.score)
+	print(best.directions)
+
+	return best
