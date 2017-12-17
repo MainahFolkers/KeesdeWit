@@ -129,9 +129,9 @@ class Protein:
     """
     mut_dir() randomly mutates direction(s) in the chain.
     """
-    def mut_dir(self, AOM):
+    def mut_dir(self, aom):
         # mutate a number of positions in the protein
-        for mutation in range(AOM):
+        for mutation in range(aom):
             # randomly choice position (not first bond because of symmetry)
             mut = choice(range(1, self.n - 1))
 
@@ -296,7 +296,7 @@ class Protein:
             # save ultimate score
             self.score = score
 
-    def visualize(self, AOM, run):
+    def visualize(self, aom, cool, run):
         plt.figure()
 
         # iterate over amino acids
@@ -316,13 +316,13 @@ class Protein:
         plt.plot(self.xs, self.ys, lw=3, zorder=1, color='black')
 
         # show grid on plot
-        plt.grid(b=True)
+        plt.grid()
 
         # set tick spacing to 1
         plt.xticks(range(min(self.xs), self.xran + 1))
         plt.yticks(range(min(self.ys), self.yran  + 1))
 
-        plt.title("Score = " + str(self.score), fontsize=30)
+        plt.title("Score = " + str(self.score), fontsize=20)
 
         # save figure
-        plt.savefig(self.chain + '_score=' + str(self.score) + '_AOM=' + str(AOM) + '_run=' + str(run) + '.jpg')
+        plt.savefig(self.chain + "_score=" + str(self.score) + "_AOM=" + str(aom) + "_COOL=" + COOL + "_run=" + str(run) + ".jpg")

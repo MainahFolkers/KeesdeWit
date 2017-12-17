@@ -2,7 +2,7 @@ from Protein_class import *
 from copy import deepcopy
 from random import uniform
 
-def sim_anneal(protein, ITER, cool, AOM = 1):
+def sim_anneal(protein, ITER, AOM, COOL):
     scores = []
 
     # fold protein randomly
@@ -36,9 +36,9 @@ def sim_anneal(protein, ITER, cool, AOM = 1):
             i += 1
 
             # temperature is acceptance probability: linear / hyperbolic cooling schedule
-            if cool is "linear":
+            if COOL is "linear":
                 temp = (ITER - i) / 100
-            elif cool is "hyperbolic":
+            elif COOL is "hyperbolic":
                 temp = 100 / i
 
             # if score improved, accept new fold as best fold
@@ -46,7 +46,7 @@ def sim_anneal(protein, ITER, cool, AOM = 1):
                 print("Improving!", new.score, "<", best.score)
                 best = deepcopy(new)
                 best_score = deepcopy(best.score)
-                # if score deteriorated, accept new fold according to temperature
+            # if score deteriorated, accept new fold according to temperature
             else:
                 # determine acceptance for this worse score
                 chance = uniform(0, 100)
@@ -59,6 +59,13 @@ def sim_anneal(protein, ITER, cool, AOM = 1):
                 all_time_best = deepcopy(best)
 
     print("Simulated annealing: Best score = ", all_time_best.score)
+
+    with open("COOL_" protein.chain + "AOM= " + str(AOM) +".txt", 'a+') as ofile:
+        ofile.write(COOL + ',')
+        for score in scores:
+            ofile.write(str(score) + ',')
+        ofile.write('\n')
+    ofile.close()
 
     # output best protein
     return all_time_best
