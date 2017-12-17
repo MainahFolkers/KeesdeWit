@@ -2,7 +2,7 @@ from Protein_class import *
 from copy import deepcopy
 from random import uniform
 
-def sim_anneal(protein, ITER, AOM = 1, cool):
+def sim_anneal(protein, ITER, cool, AOM = 1):
     scores = []
 
     # fold protein randomly
