@@ -50,7 +50,7 @@ def sim_anneal(protein, ITER, AOM, COOL):
             else:
                 # determine acceptance for this worse score
                 chance = uniform(0, 100)
-                # if change is below current temperature, accept worse fold
+                # if chance is below current temperature, accept worse fold
                 if chance < temp:
                     print("Fold accepted anyway!")
                     best = deepcopy(new)
