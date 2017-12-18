@@ -2,12 +2,15 @@ from Protein_class import *
 from copy import deepcopy
 
 def hill_climb(protein, ITER, AOM):
+    # algorithm is hill climber for plot legend label
+    algo = 'hc'
+
     scores = []
 
-    # fold protein randomly until valid folding
+    # fold protein randomly until valid fold
     new = protein.rand_fold()
 
-    # this first folding is the only folding, so the current best
+    # first fold is the only folding, so the current best
     best = deepcopy(new)
 
     # set impossible best score (minimum score = 0) so first fold always improves
@@ -18,10 +21,10 @@ def hill_climb(protein, ITER, AOM):
         # new folding continues on current best fold
         new = deepcopy(best)
 
-        # randomly mutate a number of directions
+        # randomly mutate a number of bonds
         new.mut_dir(AOM)
 
-        # if the folding is valid
+        # if the mutated fold is valid
         if new.mut_fold():
             # place protein on grid
             new.make_grid()
@@ -31,22 +34,27 @@ def hill_climb(protein, ITER, AOM):
             # save best score per iteration
             scores.append(best.score)
 
-            # continue to next iteration
-            i += 1
-
             # if score improved
             if new.score < best.score:
                 print("Climbing!", new.score, "<", best.score, "i =", i)
-                # save new best fold
+                # save current best fold
                 best = deepcopy(new)
 
-    #print("Hill climber: Best score = ", best.score)
+            # continue to next iteration
+            i += 1
 
-    with open(protein.chain +".txt", 'a+') as ofile:
-        ofile.write(str(AOM) + ',')
+    print("Hill climber: Best score = ", best.score)
+
+    # open output file
+    with open("ALGOS_" + protein.chain + ".txt", 'a+') as ofile:
+        # write algorithm name as label
+        ofile.write(algo + ',')
+        # write comma seperated scores
         for score in scores:
             ofile.write(str(score) + ',')
+        # write new line
         ofile.write('\n')
+    # close output file
     ofile.close()
 
     # output best protein
