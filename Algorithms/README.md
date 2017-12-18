@@ -1,20 +1,26 @@
-# KeesdeWit
+# Algorithms
 
-Proteins are strings of amino acids. The spatial conformation of these chains is of utmost importance for a protein's functioning in biological processes.
-It is known that hydrophobic amino acids (H) and cysteine amino acids (C) prefer proximity to one another. Such is not the case for polar amino acids (P). Two adjacent H's, two C's, or a C and an H: can all form a bond that increases the stabilty of the protein. 
-The goal of this project is to fold the given proteins with maximal stability.
+To determine the optimal conformation of proteins (different in chain length and sequence), we have implemented several algorithms. 
+* The random sampler folds the protein randomly, using the function protein.rand_fold(). The direction of the first bond is always to the right, to avoid symmetry. The second bond can only ever go up or down, also to prune some solutions. 
+* The hillclimber folds a protein randomly on its first iteration. On following iterations, the direction of a number of bonds is mutated. Only if this yields a valid protein, the try is counted as an iteration. 
+* The simulated annealing is an extension of the hillclimber. Here too, a protein is randomly folded and then mutated. Only, where a hillclimber can get stuck in a local minimum score, with simulated annealing two cooling schedules are provided in the algorithm, with a linear and a hyperbolic probability of accepting a deteriorated score. 
+* The depth-first algorithm constructively folds a protein, thereby calculating every possibility. However, with chains > 13, the computer runs out of memory. Therefore, greedy choices are made to run the algorithm in reasonable time. Thereby the guarantee on the best score is given up.
+
 
 ## Getting Started
-There are three subrepositories. 'Algorithms' contains random_sampler.py, hill_climber.py, sim_anneal.py, depth_first_search.py; the names of which reveal the algorithm. 'Classes' contains Protein_class_2D.py and Protein_class_3D.py, for protein folding in 2D or 3D, respectively. 'Experimentation' contains AOM.py (to determine the optimal amount of mutations per iteration, relevant for the hillclimber and simulated annealing algorithms), COOL.py (to determine the optimal cooling schedule for the simualted annealing), ALGOS.py (to determine which algorithm yields the best score given the samen amount of iterations and the same AOM for several runs).
+
+The algorithms are called in the files AOM.py, COOL.py, and ALGOS.py in the directory KeesdeWit/Experimentation. Run those files to call the algorithms and to visualize the results!
 
 ### Prerequisites
+
 * Python 3.x. Installing: https://www.python.org/downloads/
 * matplotlib.pyplot. Installing:
   * python -mpip install -U pip
   * python -mpip install -U matplotlib
 
 ## Running the tests
-In main.py, specify the test you want to perform. Run AOM.py to determine the optimal amount of mutations for the hillclimber/simulated annealing algorithms. Run COOL.py to determine whether a linear or a hyperbolic cooling scheme works best in simulated annealing. Then, run ALGOS.py (with the determined optimal AOM (amount of iterations) and the determined optimal COOL (cooling schedule)) to release the algoritms on a protein (random sampling, hillclimber, simulated annealing, depth first).
+
+The algorithms are called in the files AOM.py, COOL.py, and ALGOS.py in the directory KeesdeWit/Experimentation. Run those files to call the algorithms and to visualize the results!
 
 ## Built With
 
