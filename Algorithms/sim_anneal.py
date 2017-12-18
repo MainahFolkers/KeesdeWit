@@ -3,6 +3,7 @@ from copy import deepcopy
 from random import uniform
 
 def sim_anneal(protein, ITER, AOM, COOL):
+    # algorithm is simulated annealing for plot legend label
     algo = 'sa'
 
     scores = []
@@ -18,6 +19,7 @@ def sim_anneal(protein, ITER, AOM, COOL):
     best.score = 1
     all_time_best.score = 1
 
+    # start at 1 to avoid division by zero with temp
     i = 1
     while i < ITER + 1:
         # new folding continues on current best fold
@@ -51,7 +53,6 @@ def sim_anneal(protein, ITER, AOM, COOL):
                 print("Improving!", new.score, "<", best.score)
                 # save current best fold
                 best = deepcopy(new)
-
             # if score deteriorated
             else:
                 # acceptance chance for deteriorated fold
@@ -73,7 +74,7 @@ def sim_anneal(protein, ITER, AOM, COOL):
     print("Simulated annealing: Best score = ", all_time_best.score)
 
     # open output file
-    with open("ALGOS_"protein.chain +".txt", 'a+') as ofile:
+    with open("ALGOS_" + protein.chain + ".txt", 'a+') as ofile:
         # write algorithm name as label
         ofile.write(algo + ',')
         # write comma seperated scores
