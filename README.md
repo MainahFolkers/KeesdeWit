@@ -5,15 +5,16 @@ It is known that hydrophobic amino acids (H) and cysteine amino acids (C) prefer
 The goal of this project is to fold the given proteins with maximal stability.
 
 ## Getting Started
-Download Protein_class.py (for 2D folding) along with main.py, random_sampler.py, hill_climber.py, sim_anneal.py and depth_first_search.py and run main.py.
-If you wish to fold in 3D download Protein_class_3D.py and change every reference to Protein_class to Protein_class_3D.
+There are three sub
 
 ### Prerequisites
-Python 3
-
+* Python 3.x. Installing: https://www.python.org/downloads/
+* matplotlib.pyplot. Installing:
+  * python -mpip install -U pip
+  * python -mpip install -U matplotlib
 
 ## Running the tests
-By downloading and running AOM.py a test to see what the effect of varying the amount of mutations per iteration of the hill climber algoritm is can be performed.
+In main.py, specify the test you want to perform. Run AOM.py to determine the optimal amount of mutations for the hillclimber/simulated annealing algorithms. Run COOL.py to determine whether a linear or a hyperbolic cooling scheme works best in simulated annealing. Then, run ALGOS.py (with the determined optimal AOM (amount of iterations) and the determined optimal COOL (cooling schedule)) to release the algoritms on a protein (random sampling, hillclimber, simulated annealing, depth first).
 
 ## Built With
 
@@ -25,10 +26,12 @@ By downloading and running AOM.py a test to see what the effect of varying the a
 Python 3.6.1
 
 libraries:
-* copy (deepcopy) https://docs.python.org/2/library/copy.html
+* copy (deepcopy) https://docs.python.org/3/library/copy.html
 * matplotlib.pyplot https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html
 * time https://docs.python.org/3/library/time.html
 * random (choice, uniform)  https://docs.python.org/3/library/random.html
+* collections (deque) https://docs.python.org/3/library/collections.html?highlight=collections#module-collections
+* math https://docs.python.org/3/library/math.html?highlight=math#module-math
 
 ## Authors
 
@@ -43,3 +46,4 @@ libraries:
 * Bart for feedback on our practice presentations
 * Zhang, J., Kou, S. C., & Liu, J. S. (2007). Biopolymer structure simulation and optimization via fragment regrowth Monte Carlo. The Journal of chemical physics, 126(22), 06B605.
 * Custódio, F. L., Barbosa, H. J., & Dardenne, L. E. (2004). Investigation of the three-dimensional lattice HP protein folding model using a genetic algorithm. Genetics and Molecular Biology, 27(4), 611-615.
+* Dill, K. A. et al. (1995). Principles of protein folding - A perspective from simple exact models. Protein Science, 4, 561-602.
