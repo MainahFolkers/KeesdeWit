@@ -1,4 +1,4 @@
-from Protein_class import *
+from Protein_class_2D import *
 from copy import deepcopy
 
 def hill_climb(protein, ITER, AOM):

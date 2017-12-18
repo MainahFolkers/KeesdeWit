@@ -1,4 +1,4 @@
-from Protein_class import *
+from Protein_class_2D import *
 from copy import deepcopy
 from random import uniform
 
