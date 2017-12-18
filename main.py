@@ -1,7 +1,8 @@
+from Protein_class_2D import *
 from random_sampler import *
 from hill_climber import *
 from sim_anneal import *
-import matplotlib.pyplot as plt
+# from depth_first_search import *
 
 chain = input("Chain: (HHPHHHPH)")
 
@@ -17,7 +18,7 @@ vis = input("Visualize? (y/n) ")
 
 if vis == 'y':
     # visualize best random sampled protein
-    visualize(protein)
+    protein.visualize("NA", "NA", "NA")
 
 # ask user for amount of iterations
 AOM = int(input("Amount of mutations: "))
@@ -28,25 +29,26 @@ protein = hill_climb(protein, ITER, AOM)
 vis = input("Visualize? (y/n) ")
 
 if vis == 'y':
-    # visualize best hill climbed protein
-    visualize(protein)
+    # visualize best random sampled protein
+    protein.visualize(AOM, "NA", "NA")
     
 # ask user input for cooling schedule: linear / hyperbolic
 cool = input("Cooling schedule: linear / hyperbolic: ")
 
 # simmulated annealing algorithm
-protein = sim_anneal(protein, ITER, cool, AOM)
+protein = sim_anneal(protein, ITER, AOM, cool)
 vis = input("Visualize? (y/n) ")
 
 if vis == 'y':
-    # visualize best hill climbed protein
-    visualize(protein)
+    # visualize best random sampled protein
+    protein.visualize(AOM, cool, "NA")
 
 # Depth first search algorithm 
-protein = depth_path(path, 0, maxdepth, 0)
+protein = depth_first_search(protein)
 
 vis = input("Visualize? (y/n) ")
 
 if vis == 'y':
-    # visualize best hill climbed protein
-    visualize(protein)
+    # visualize best random sampled protein
+    protein.visualize("NA", "NA", "NA")
+
