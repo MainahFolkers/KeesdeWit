@@ -1,5 +1,5 @@
 
-from Protein_class import *
+from Protein_class_2D import *
 from copy import deepcopy
 
 MAX_LEN = 10
