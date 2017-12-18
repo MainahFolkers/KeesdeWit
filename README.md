@@ -11,6 +11,7 @@ If you wish to fold in 3D download Protein_class_3D.py and change every referenc
 ### Prerequisites
 Python 3
 
+
 ## Running the tests
 By downloading and running AOM.py a test to see what the effect of varying the amount of mutations per iteration of the hill climber algoritm is can be performed.
 
@@ -22,6 +23,12 @@ By downloading and running AOM.py a test to see what the effect of varying the a
 ## Versioning
 
 Python 3.6.1
+
+libraries:
+* copy (deepcopy)
+* matplotlib.pyplot
+* time
+* random (choice, uniform)
 
 ## Authors
 
