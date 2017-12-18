@@ -25,10 +25,10 @@ By downloading and running AOM.py a test to see what the effect of varying the a
 Python 3.6.1
 
 libraries:
-* copy (deepcopy)
-* matplotlib.pyplot
-* time
-* random (choice, uniform)
+* copy (deepcopy) https://docs.python.org/2/library/copy.html
+* matplotlib.pyplot https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html
+* time https://docs.python.org/3/library/time.html
+* random (choice, uniform)  https://docs.python.org/3/library/random.html
 
 ## Authors
 
