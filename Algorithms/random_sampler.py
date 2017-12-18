@@ -2,12 +2,15 @@ from Protein_class import *
 from copy import deepcopy
 
 def rand_samp(protein, ITER):
+    # algorithm is random sampler for plot legend label
+    algo = 'rs'
+
     scores = []
 
     # fold protein randomly until valid fold
     new = protein.rand_fold()
 
-    # we have only one fold, so that is the current best
+    # first fold is the only folding, so the current best
     best = deepcopy(new)
 
     # set impossible best score (minimum score = 0) so first fold always improves
@@ -25,7 +28,7 @@ def rand_samp(protein, ITER):
         # save best score per iteration
         scores.append(best.score)
 
-        # is score improved
+        # if score improved
         if new.score < best.score:
             print("Improving!", new.score, "<", best.score)
             # save current best fold
@@ -34,7 +37,7 @@ def rand_samp(protein, ITER):
     print("Random sampler: Best score = ", best.score)
 
     # open output file
-    with open("ALGOS_"protein.chain +".txt", 'a+') as ofile:
+    with open("ALGOS_" + protein.chain + ".txt", 'a+') as ofile:
         # write algorithm name as label
         ofile.write(algo + ',')
         # write comma seperated scores
