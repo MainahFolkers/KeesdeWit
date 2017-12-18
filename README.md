@@ -30,8 +30,6 @@ libraries:
 * matplotlib.pyplot https://matplotlib.org/api/_as_gen/matplotlib.pyplot.plot.html
 * time https://docs.python.org/3/library/time.html
 * random (choice, uniform)  https://docs.python.org/3/library/random.html
-* collections (deque) https://docs.python.org/3/library/collections.html?highlight=collections#module-collections
-* math https://docs.python.org/3/library/math.html?highlight=math#module-math
 
 ## Authors
 
