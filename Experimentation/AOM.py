@@ -1,71 +1,93 @@
-from Protein_class import *
-from hill_climber import *
+from Protein_class_2D import *
+from sim_anneal import *
+from copy import deepcopy
 import matplotlib.pyplot as plt
-import time
-start_time = time.time()
+from time import time
+
+# save start time
+start_time = time()
 
 chains = [
     "HHPHHHPH",
-    "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH"
-    #,
-    #"HCPHPHPHCHHHHPCCPPHPPPHPPPPCPPPHPPPHPHHHHCHPHPHPHH"
+    "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH",
+    "HCPHPHPHCHHHHPCCPPHPPPHPPPPCPPPHPPPHPHHHHCHPHPHPHH"
     ]
 
 # amount of iterations
-ITER = 10
+ITER = 2000
 # amount of runs
-RUNS = 3
-# amount of mutations
-AOM_MAX = 3
+RUNS = 5
+# maximum amount of mutations
+AOM = 7
+# cooling schedule
+COOL = "hyperbolic"
 
+# iterate over chains
 for chain in chains:
+    # set impossible best score (minimum score = 0)
+    best_score = 1
+
     # data series for y-axis in legend
     ys = []
 
     print("Protein chain =", chain)
     protein = Protein(chain)
 
-    # amount of mutations varying from 1 to all bonds
-    for aom in range(1, AOM_MAX + 1):
+    # varying amount of mutations
+    for aom in range(1, AOM + 1):
         print("Amount of mutations =", aom)
 
-        # sample size for mean decline in best score per iteration
+        # iterate over runs
         for run in range(1, RUNS + 1):
             print("Run =", run)
-            protein = hill_climb(protein, ITER, aom)
-            protein.visualize(aom, run)
 
-    with open(protein.chain +".txt", 'r') as ifile:
+            protein = sim_anneal(protein, ITER, aom, COOL)
+
+            # if score improved
+            if protein.score < best_score:
+                # visualize protein
+                protein.visualize(aom, COOL, run)
+                best_score = deepcopy(protein.score)
+                print("Current best score = ", best_score)
+
+    # open input file
+    with open(COOL + "_AOM_" + protein.chain + ".txt", 'r') as ifile:
         data = ifile.readlines()
         for line in data:
             # remove comma
             scores = line.split(',')
             # remove \n
             scores = scores[:-1]
-            # covert string to int
-            scores = [ int(score) for score in scores ]
+            # covert score strings to integers
+            scores[1:] = [ int(score) for score in scores[1:] ]
             ys.append(scores)
+    # close input file
     ifile.close()
 
+    # open figure
     fig = plt.figure()
     ax = fig.add_subplot(111)
+
+    # label axes
     plt.xlabel("Iterations")
     plt.ylabel("Best score")
 
     ys_mean = []
+
     # iterate over runs
-    for i in range(len(ys)):
-        # if new AOM starts
+    for i in range(len(ys) - RUNS + 1):
+        # if new sample starts
         if i % RUNS is 0:
             y_mean = []
-            # append AOM legend label
+            # append legend label
             y_mean.append(ys[i][0])
             # iterate over scores of 1 run
             for j in range(1, len(ys[i])):
                 score_sum = 0
-                # iterate over ys with same AOM
+                # iterate over ys with same sample
                 for k in range(i, i + RUNS):
                     score_sum += ys[k][j]
+                # calculate mean score per iteration
                 score_mean = score_sum / RUNS
                 y_mean.append(score_mean)
             ys_mean.append(y_mean)
@@ -74,12 +96,19 @@ for chain in chains:
     for y_mean in ys_mean:
         # x is amount of iterations
         x = range(len(y_mean) - 2)
-        # first element of y is label
+        # plot line, first element of y is legend label
         ax.plot(x, y_mean[2:], label=y_mean[0], zorder=i)
         i -= 1
 
+    # make plot legend
     plt.legend(title="Mutations", bbox_to_anchor=(1.04,1), loc="upper left", borderaxespad=0)
-    plt.savefig("AOM_" + protein.chain + ".jpg", bbox_inches = 'tight')
 
-minutes = (time.time() - start_time) / 60
-print(minutes, " minutes")
+    # save figure
+    plt.savefig(COOL + "_AOM_" + protein.chain + ".jpg", bbox_inches = 'tight')
+
+    # close figure
+    plt.clf()
+
+# amount of minutes program was running
+minutes = (time() - start_time) / 60
+print(minutes, " minutes total")
