@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 class Protein:
     class AA():
-        # aa is type of amino acid (H/P, can later expand with C)
+        # aa is type of amino acid (H/P/C)
         aa_type = None
         # i is index in amino acid chain
         i = None
@@ -36,18 +36,20 @@ class Protein:
 
             # first amino acid starts on (x = 0, y = 0)
             self.x, self.y = 0, 0
-
+            # save coordinates of first amino acid
             self.coordinates.append([self.x, self.y])
 
-            # first bond is to right
+            # first bond is to right, to avoid symmetry
             self.directions[0] = 'r'
 
-            # second AA always to right (x = x + 1, y = 0) which is (x = 1, y = 0), to avoid symmetry
+            # second amino acid always to right (x = x + 1, y = 0) which is (x = 1, y = 0), to avoid symmetry
             self.x += 1
+            # save coordinates of second amino acid
             self.coordinates.append([self.x, self.y])
 
-            # third AA can only bend up or to right
+            # second bond can only bend up or to right, to avoid symmetry
             avail_direcs = ['r', 'u']
+            # choose a direction from available directions
             chosen_direc = choice(avail_direcs)
 
             # second bond is saved
@@ -61,12 +63,11 @@ class Protein:
             # directions a bond can move to (right, down, left, up)
             all_direcs = ['r', 'd', 'l', 'u']
 
-            # first three amino acids already have coordinates -> start at fourth
+            # start at fourth amino acid
             aa = 3
 
             # iterate over amino acids
             while aa < self.n:
-
                 # reset available directions to choose from to all directions
                 avail_direcs = deepcopy(all_direcs)
 
@@ -82,12 +83,13 @@ class Protein:
 
                 # while there are still directions left to choose from
                 while avail_direcs:
-
-                    # random choice 1 of 3 directions
+                    # random choice 1 of 3 available directions
                     chosen_direc = choice(avail_direcs)
 
-                    # aa - 1 is index of bond
+                    # bond index
                     b = aa - 1
+
+                    # save direction of bond
                     self.directions[b] = chosen_direc
 
                     # sample without replacement, remove chosen direction from options
@@ -95,6 +97,7 @@ class Protein:
 
                     # if chosen direction yields valid coordinates
                     if self.check_val(aa, b):
+                        # if the end of the chain is reached
                         if aa is self.n - 1:
                             return self
                         # continue to next amino acid
@@ -103,7 +106,7 @@ class Protein:
 
                 # if there are no directions left to choose from
                 if not avail_direcs:
-                    # stop current folding
+                    # stop current fold
                     break
 
     """
@@ -113,10 +116,10 @@ class Protein:
     NOTE: be careful with input, as it differs between random sampler and hillclimber.
     """
     def check_val(self, aa, b):
-        # calculate next coordinates according to selected direction
+        # calculate next coordinates according to chosen direction
         [nx, ny] = self.bend(self.directions[b], self.x, self.y)
 
-        # if those coordinates on grid are not yet occupied by other amino acid
+        # if those coordinates on grid are not yet occupied by another amino acid
         if [nx, ny] not in self.coordinates:
 
             # update old x and y
@@ -124,6 +127,7 @@ class Protein:
 
             # save the new coordinates
             self.coordinates.append([nx, ny])
+
             return True
 
     """
@@ -137,10 +141,11 @@ class Protein:
 
             # directions a bond can move to (right, down, left, up)
             avail_direcs = ['r', 'd', 'l', 'u']
+
             # original direction cannot be chosen again
             avail_direcs.remove(self.directions[mut])
 
-            # replace original direction with mutation
+            # replace original direction with mutated direction
             self.directions[mut] = choice(avail_direcs)
 
     """
@@ -150,11 +155,11 @@ class Protein:
     def mut_fold(self):
         # first amino acid starts on (x = 0, y = 0)
         self.x, self.y = 0, 0
+        # save coordinates of first amino acid
         self.coordinates = [[self.x, self.y]]
 
         # start at second amino acid
         aa = 1
-
         # iterate over amino acids
         while aa < self.n:
             # bond index
@@ -189,7 +194,6 @@ class Protein:
     make_grid() works with the coordinates
     """
     def make_grid(self):
-        # empty arrays with x and y components of coordinates
         self.xs = []
         self.ys = []
 
@@ -199,31 +203,29 @@ class Protein:
             self.xs.append(self.coordinates[aa][0])
             self.ys.append(self.coordinates[aa][1])
 
-        # define minima
         xmin = min(self.xs)
         ymin = min(self.ys)
 
-        # calculate ranges voor x and y
+        # calculate ranges for x and y
         self.xran = max(self.xs) - xmin
         self.yran = max(self.ys) - ymin
 
-        # make minimal grid (based on current x and y ranges)
+        # make minimal grid (based on x and y ranges)
         self.grid = [[self.AA() for y in range(self.yran + 1)] for x in range(self.xran + 1)]
 
-        # iterate over amino acids in chain
+        # iterate over amino acids
         for aa in range(self.n):
-
             # transform coordinates onto minimal grid
             self.xs[aa] -= xmin
             self.ys[aa] -= ymin
 
-            # place amino acids onto grid
+            # place amino acids on grid
             self.grid[self.xs[aa]][self.ys[aa]].aa_type = self.chain[aa]
             self.grid[self.xs[aa]][self.ys[aa]].i = aa
 
     """
     calc_score() calculates the score by traversing the grid
-    looking for adjacent Hs that are not connected in the chain.
+    looking for adjacent Hs or Cs that are not connected in the chain.
     """
     def calc_score(self):
         # lowerbound: worst score = 0
@@ -235,7 +237,7 @@ class Protein:
             for c in range(self.yran + 1):
                 # check if there is an amino acid of interest (H/C)
                 if self.grid[r][c].aa_type is 'H' or self.grid[r][c].aa_type is 'C':
-                    # the cell index that the H/C is in
+                    # is amino acid index of that H/C
                     i = self.grid[r][c].i
 
                     # if row index does not go outside of grid range
@@ -293,15 +295,15 @@ class Protein:
                             if abs(ni-i) is not 1:
                                 score -= 5
 
-            # save ultimate score
             self.score = score
 
     def visualize(self, aom, cool, run):
+        # open figure
         plt.figure()
 
         # iterate over amino acids
         for aa in range(self.n):
-            # determine color for point on plot (later expand with C)
+            # determine color for point on plot
             if self.chain[aa] is 'H':
                 col = 'red'
             elif self.chain[aa] is 'C':
@@ -309,7 +311,9 @@ class Protein:
             elif self.chain[aa] is 'P':
                 col = 'blue'
 
+            # plot point for amino acid
             plt.scatter(self.xs[aa], self.ys[aa], s=120, zorder=2, color=col)
+            # append index to amino acid
             plt.annotate(aa, xy=(self.xs[aa], self.ys[aa]), xytext=(self.xs[aa] + 0.05, self.ys[aa] + 0.05), fontsize=10)
 
         # plot black line behind / between points
@@ -322,7 +326,10 @@ class Protein:
         plt.xticks(range(min(self.xs), self.xran + 1))
         plt.yticks(range(min(self.ys), self.yran  + 1))
 
+        # print score in plot title
         plt.title("Score = " + str(self.score), fontsize=20)
 
         # save figure
-        plt.savefig(self.chain + "_score=" + str(self.score) + "_AOM=" + str(aom) + "_COOL=" + COOL + "_run=" + str(run) + ".jpg")
+        plt.savefig(self.chain + "_score=" + str(self.score) + "_AOM=" + str(aom) + "_COOL=" + cool + "_run=" + str(run) + ".jpg")
+        # close figure
+        plt.clf()
