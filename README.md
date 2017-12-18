@@ -5,7 +5,7 @@ It is known that hydrophobic amino acids (H) and cysteine amino acids (C) prefer
 The goal of this project is to fold the given proteins with maximal stability.
 
 ## Getting Started
-There are three sub
+There are three subrepositories. 'Algorithms' contains random_sampler.py, hill_climber.py, sim_anneal.py, depth_first_search.py; the names of which reveal the algorithm. 'Classes' contains Protein_class_2D.py and Protein_class_3D.py, for protein folding in 2D or 3D, respectively. 'Experimentation' contains AOM.py (to determine the optimal amount of mutations per iteration, relevant for the hillclimber and simulated annealing algorithms), COOL.py (to determine the optimal cooling schedule for the simualted annealing), ALGOS.py (to determine which algorithm yields the best score given the samen amount of iterations and the same AOM for several runs).
 
 ### Prerequisites
 * Python 3.x. Installing: https://www.python.org/downloads/
