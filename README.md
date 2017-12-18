@@ -6,6 +6,7 @@ The goal of this project is to fold the given proteins with maximal stability.
 
 ## Getting Started
 There are three subrepositories. 'Algorithms' contains random_sampler.py, hill_climber.py, sim_anneal.py, depth_first_search.py; the names of which reveal the algorithm. 'Classes' contains Protein_class_2D.py and Protein_class_3D.py, for protein folding in 2D or 3D, respectively. 'Experimentation' contains AOM.py (to determine the optimal amount of mutations per iteration, relevant for the hillclimber and simulated annealing algorithms), COOL.py (to determine the optimal cooling schedule for the simualted annealing), ALGOS.py (to determine which algorithm yields the best score given the samen amount of iterations and the same AOM for several runs).
+Running main.py gives examples of output that you get in the experimentation files. 
 
 ### Prerequisites
 * Python 3.x. Installing: https://www.python.org/downloads/
@@ -14,7 +15,7 @@ There are three subrepositories. 'Algorithms' contains random_sampler.py, hill_c
   * python -mpip install -U matplotlib
 
 ## Running the tests
-In main.py, specify the test you want to perform. Run AOM.py to determine the optimal amount of mutations for the hillclimber/simulated annealing algorithms. Run COOL.py to determine whether a linear or a hyperbolic cooling scheme works best in simulated annealing. Then, run ALGOS.py (with the determined optimal AOM (amount of iterations) and the determined optimal COOL (cooling schedule)) to release the algoritms on a protein (random sampling, hillclimber, simulated annealing, depth first).
+In main.py, specify the test you want to perform. Give input in the terminal to see the visualizations of folds!
 
 ## Built With
 
